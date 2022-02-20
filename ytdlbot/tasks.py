@@ -180,7 +180,7 @@ def direct_normal_download(bot_msg, client, url):
     except TypeError:
         filename = getattr(req, "url", "").rsplit("/")[-1]
     except Exception as e:
-        bot_msg.edit_text(f"Download failed!❌\n\n```{e}```", disable_web_page_preview=True)
+        bot_msg.edit_text(f"Yükleme Hatalı!❌\n\n```{e}```", disable_web_page_preview=True)
         return
 
     if not filename:
@@ -205,7 +205,7 @@ def direct_normal_download(bot_msg, client, url):
                              caption=f"filesize: {sizeof_fmt(st_size)}",
                              progress=upload_hook, progress_args=(bot_msg,),
                              )
-        bot_msg.edit_text(f"Download success!✅")
+        bot_msg.edit_text(f"✅ Indirme Tamamlandı!")
 
 
 def normal_audio(bot_msg, client):
@@ -235,7 +235,7 @@ def normal_audio(bot_msg, client):
 def get_dl_source():
     worker_name = os.getenv("WORKER_NAME")
     if worker_name:
-        return f"Downloaded by  {worker_name}"
+        return f"Indiren  {worker_name}"
     return ""
 
 
@@ -247,7 +247,7 @@ def upload_transfer_sh(paths: list) -> "str":
         req = requests.post("https://transfer.sh", data=m, headers=headers)
         return re.sub(r"https://", "\nhttps://", req.text)
     except requests.exceptions.RequestException as e:
-        return f"Upload failed!❌\n\n```{e}```"
+        return f"Yukleme Hatali❌\n\n```{e}```"
 
 
 def ytdl_normal_download(bot_msg, client, url):
@@ -270,11 +270,11 @@ def ytdl_normal_download(bot_msg, client, url):
                 client.send_message(chat_id, upload_transfer_sh(video_paths))
                 return
             upload_processor(client, bot_msg, url, video_path)
-        bot_msg.edit_text('Download success!✅')
+        bot_msg.edit_text('✅ Indirme Tamamlandı!')
     else:
         client.send_chat_action(chat_id, 'typing')
         tb = result["error"][0:4000]
-        bot_msg.edit_text(f"Download failed!❌\n\n```{tb}```", disable_web_page_preview=True)
+        bot_msg.edit_text(f"Yükleme Hatalı!❌\n\n```{tb}```", disable_web_page_preview=True)
 
     temp_dir.cleanup()
 
