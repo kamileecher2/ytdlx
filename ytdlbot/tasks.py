@@ -335,8 +335,8 @@ def gen_cap(chat_id, url, video_path):
         )
     remain = bot_text.remaining_quota_caption(chat_id)
     worker = get_dl_source()
-    cap = f"`{filename}`\n\nBilgi:{meta['width']}x{meta['height']} {size} {meta['duration']}s" \
-          f"\n{remain}\n{worker}"
+            cap = f"`📕Adi: {filename}`\n\nℹBilgi: {meta['width']}x{meta['height']} {size} {meta['duration']}s" \
+                  f"\n{remain}\n{worker}"
     return cap, meta
 
 
