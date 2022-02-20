@@ -10,19 +10,44 @@
   "env": {
     "TOKEN": {
       "description": "Bot token",
-      "value": "token"
+      "value": "5180077110:AAGl2zAgoWusZk_uhJu4HSMM94pkf_Ymv4w"
     },
     "APP_ID": {
       "description": "APP ID",
-      "value": "12345"
+      "value": "1912933"
     },
     "APP_HASH": {
       "description": "APP HASH",
-      "value": "12345abc"
+      "value": "bbef2b519ac0d81194216f271366da12"
     },
     "OWNER": {
       "description": "Your telegram username",
-      "value": "username",
+      "value": "kamileecher",
+      "required": false
+    },
+    "AUDIO_FORMAT": {
+      "description": "Your telegram username",
+      "value": "mp3",
+      "required": false
+    },
+    "WORKERS": {
+      "description": "Your telegram username",
+      "value": "500",
+      "required": false
+    },
+    "PYRO_WORKERS": {
+      "description": "Your telegram username",
+      "value": "500",
+      "required": false
+    },
+    "AFD_LINK": {
+      "description": "Your telegram username",
+      "value": "https://t.me/kamileecherch",
+      "required": false
+    },
+    "COFFEE_LINK": {
+      "description": "Your telegram username",
+      "value": "https://t.me/kamileecher",
       "required": false
     }
   },
@@ -36,6 +61,9 @@
     {
       "url": "https://github.com/heroku/heroku-buildpack-python.git"
     },
+    {
+      "url": "https://github.com/gaumire/heroku-buildpack-mysql.git"
+    }, 
     {
       "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
     }
