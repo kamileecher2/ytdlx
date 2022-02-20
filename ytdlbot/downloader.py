@@ -69,7 +69,7 @@ def tqdm_progress(desc, total, finished, speed="", eta=""):
     text = f"""
 {desc}
 
-{{more("🚦 ", progress)}
+{more("🚦 ", progress)}
 {more("🔻 Indirilen:", detail)}
 {more("⚡️ Hız:", speed)}
 {more("⏰ Zaman:", eta)}
