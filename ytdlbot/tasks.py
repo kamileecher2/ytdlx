@@ -191,7 +191,7 @@ def direct_normal_download(bot_msg, client, url):
         # consume the req.content
         downloaded = 0
         for chunk in req.iter_content(1024 * 1024):
-            text = tqdm_progress("Downloading...", length, downloaded)
+            text = tqdm_progress("⏬ Indiriliyor...", length, downloaded)
             edit_text(bot_msg, text)
             with open(filepath, "ab") as fp:
                 fp.write(chunk)
@@ -259,7 +259,7 @@ def ytdl_normal_download(bot_msg, client, url):
     if result["status"]:
         client.send_chat_action(chat_id, 'upload_document')
         video_paths = result["filepath"]
-        bot_msg.edit_text('Download complete. Sending now...')
+        bot_msg.edit_text('▶️ İndirme tamamlandı. Gönderiliyor...')
         for video_path in video_paths:
             # normally there's only one video in that path...
             st_size = os.stat(video_path).st_size
