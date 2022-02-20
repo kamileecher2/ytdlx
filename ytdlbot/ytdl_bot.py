@@ -81,7 +81,7 @@ def private_use(func):
 @app.on_message(filters.command(["start"]))
 def start_handler(client: "Client", message: "types.Message"):
     from_id = message.from_user.id
-    logging.info("Welcome to youtube-dl bot!")
+    logging.info("Youtube Bot'a hoş geldiniz!")
     client.send_chat_action(from_id, "typing")
     greeting = bot_text.get_vip_greeting(from_id)
     quota = bot_text.remaining_quota_caption(from_id)
@@ -187,7 +187,7 @@ def direct_handler(client: "Client", message: "types.Message"):
     logging.info("direct start %s", url)
     if not re.findall(r"^https?://", url.lower()):
         Redis().update_metrics("bad_request")
-        message.reply_text("Send me a DIRECT LINK.", quote=True)
+        message.reply_text("🤪 DOĞRUDAN BAĞLANTI gönder.", quote=True)
         return
 
     bot_msg = message.reply_text("Request received.", quote=True)
@@ -204,21 +204,21 @@ def settings_handler(client: "Client", message: "types.Message"):
     text = {"Local": "Celery", "Celery": "Local"}.get(set_mode, "Local")
     mode_text = f"Download mode: **{set_mode}**"
     if message.chat.username == OWNER:
-        extra = [InlineKeyboardButton(f"Change download mode to {text}", callback_data=text)]
+        extra = [InlineKeyboardButton(f"Indirme Modunu Degistir {text}", callback_data=text)]
     else:
         extra = []
 
     markup = InlineKeyboardMarkup(
         [
             [  # First row
-                InlineKeyboardButton("send as document", callback_data="document"),
-                InlineKeyboardButton("send as video", callback_data="video"),
-                InlineKeyboardButton("send as audio", callback_data="audio")
+                InlineKeyboardButton("Doc", callback_data="document"),
+                InlineKeyboardButton("Vid", callback_data="video"),
+                InlineKeyboardButton("Audio", callback_data="audio")
             ],
             [  # second row
-                InlineKeyboardButton("High Quality", callback_data="high"),
-                InlineKeyboardButton("Medium Quality", callback_data="medium"),
-                InlineKeyboardButton("Low Quality", callback_data="low"),
+                InlineKeyboardButton("HQ-Ses", callback_data="high"),
+                InlineKeyboardButton("MQ-Ses", callback_data="medium"),
+                InlineKeyboardButton("LQ-Ses", callback_data="low"),
             ],
             extra
         ]
@@ -256,11 +256,11 @@ def download_handler(client: "Client", message: "types.Message"):
 
     if not re.findall(r"^https?://", url.lower()):
         red.update_metrics("bad_request")
-        message.reply_text("I think you should send me a link.", quote=True)
+        message.reply_text("Bana bir link göndermelisin.", quote=True)
         return
 
     if re.findall(r"^https://www\.youtube\.com/channel/", VIP.extract_canonical_link(url)):
-        message.reply_text("Channel download is disabled now. Please send me individual video link.", quote=True)
+        message.reply_text("Kanal indirme şimdi devre dışı.  Lütfen bana bireysel video bağlantısı gönderin.", quote=True)
         red.update_metrics("reject_channel")
         return
 
@@ -278,7 +278,7 @@ def download_handler(client: "Client", message: "types.Message"):
         bot_msg = message.reply_document(f, caption=f"Flood wait! Please wait {e.x} seconds...."
                                                     f"Your job will start automatically", quote=True)
         f.close()
-        client.send_message(OWNER, f"Flood wait! 🙁 {e.x} seconds....")
+        client.send_message(OWNER, f"Flood!!!! 🙁 {e.x} Sn Bekle....")
         time.sleep(e.x)
 
     client.send_chat_action(chat_id, 'upload_video')
@@ -291,7 +291,7 @@ def send_method_callback(client: "Client", callback_query: types.CallbackQuery):
     data = callback_query.data
     logging.info("Setting %s file type to %s", chat_id, data)
     set_user_settings(chat_id, "method", data)
-    callback_query.answer(f"Your send type was set to {callback_query.data}")
+    callback_query.answer(f"Gonderme Turu Ayarlandı {callback_query.data}")
 
 
 @app.on_callback_query(filters.regex(r"high|medium|low"))
@@ -300,12 +300,12 @@ def download_resolution_callback(client: "Client", callback_query: types.Callbac
     data = callback_query.data
     logging.info("Setting %s file type to %s", chat_id, data)
     set_user_settings(chat_id, "resolution", data)
-    callback_query.answer(f"Your default download quality was set to {callback_query.data}")
+    callback_query.answer(f"Varsayilan Indirme Kalitesi {callback_query.data}")
 
 
 @app.on_callback_query(filters.regex(r"convert"))
 def audio_callback(client: "Client", callback_query: types.CallbackQuery):
-    callback_query.answer(f"Converting to audio...please wait patiently")
+    callback_query.answer(f"Sese Dönüştürülüyor...")
     Redis().update_metrics("audio_request")
 
     msg = callback_query.message
@@ -316,7 +316,7 @@ def audio_callback(client: "Client", callback_query: types.CallbackQuery):
 def owner_local_callback(client: "Client", callback_query: types.CallbackQuery):
     chat_id = callback_query.message.chat.id
     set_user_settings(chat_id, "mode", callback_query.data)
-    callback_query.answer(f"Download mode was changed to {callback_query.data}")
+    callback_query.answer(f"Gonderme Turu Ayarlandı {callback_query.data}")
 
 
 def periodic_sub_check():
