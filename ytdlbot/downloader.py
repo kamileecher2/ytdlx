@@ -69,11 +69,10 @@ def tqdm_progress(desc, total, finished, speed="", eta=""):
     text = f"""
 {desc}
 
-{more("🚦 Ilerleme:", progress)}
-{more("🔻 Indirilen:", detail)}
-{more("⚡️ Hız:", speed)}
-{more("⏰ Zaman:", eta)}
-
+{progress}
+{detail}
+{more("Speed:", speed)}
+{more("ETA:", eta)}
     """
     f.close()
     return text
@@ -101,14 +100,14 @@ def download_hook(d: dict, bot_msg):
             if result is False:
                 raise ValueError(err_msg)
         eta = remove_bash_color(d.get("_eta_str", d.get("eta")))
-        text = tqdm_progress("⏬ Indiriliyor...", total, downloaded, speed, eta)
+        text = tqdm_progress("Downloading...", total, downloaded, speed, eta)
         edit_text(bot_msg, text)
         r.set(key, "ok", ex=5)
 
 
 def upload_hook(current, total, bot_msg):
     # filesize = sizeof_fmt(total)
-    text = tqdm_progress("⏫ Yukleniyor...", total, current)
+    text = tqdm_progress("Uploading...", total, current)
     edit_text(bot_msg, text)
 
 
@@ -140,7 +139,7 @@ def convert_to_mp4(resp: dict, bot_msg):
                         bot_msg.chat.id,
                         "You're not VIP, so you can't convert longer video to streaming formats.")
                     break
-                edit_text(bot_msg, f"{current_time()}: Video {path.name} mp4'e Donuşturuluyor. Lütfen bekle.")
+                edit_text(bot_msg, f"{current_time()}: Converting {path.name} to mp4. Please wait.")
                 new_file_path = path.with_suffix(".mp4")
                 logging.info("Detected %s, converting to mp4...", mime)
                 subprocess.check_output(["ffmpeg", "-y", "-i", path, new_file_path])
@@ -149,3 +148,121 @@ def convert_to_mp4(resp: dict, bot_msg):
 
         return resp
 
+
+def can_convert_mp4(video_path, uid):
+    if not ENABLE_VIP:
+        return True
+    video_streams = ffmpeg.probe(video_path, select_streams="v")
+    try:
+        duration = int(float(video_streams["format"]["duration"]))
+    except Exception:
+        duration = 0
+    if duration > MAX_DURATION and not VIP().check_vip(uid):
+        logging.info("Video duration: %s, not vip, can't convert", duration)
+        return False
+    else:
+        return True
+
+
+def ytdl_download(url, tempdir, bm) -> dict:
+    chat_id = bm.chat.id
+    response = {"status": True, "error": "", "filepath": []}
+    output = pathlib.Path(tempdir, "%(title).70s.%(ext)s").as_posix()
+    ydl_opts = {
+        'progress_hooks': [lambda d: download_hook(d, bm)],
+        'outtmpl': output,
+        'restrictfilenames': False,
+        'quiet': True
+    }
+    formats = [
+        "bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio",
+        "bestvideo[vcodec^=avc]+bestaudio[acodec^=mp4a]/best[vcodec^=avc]/best",
+        ""
+    ]
+    adjust_formats(chat_id, url, formats)
+    add_instagram_cookies(url, ydl_opts)
+    for f in formats:
+        if f:
+            ydl_opts["format"] = f
+        try:
+            logging.info("Downloading for %s with format %s", url, f)
+            with ytdl.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([url])
+            response["status"] = True
+            response["error"] = ""
+            break
+
+        except (ValueError, DownloadError) as e:
+            logging.error("Download failed for %s ", url)
+            response["status"] = False
+            response["error"] = str(e)
+        except Exception as e:
+            logging.error("UNKNOWN EXCEPTION: %s", e)
+
+    logging.info("%s - %s", url, response)
+    if response["status"] is False:
+        return response
+
+    for i in os.listdir(tempdir):
+        p = pathlib.Path(tempdir, i)
+        file_size = os.stat(p).st_size
+        if ENABLE_VIP:
+            remain, _, ttl = VIP().check_remaining_quota(chat_id)
+            result, err_msg = check_quota(file_size, chat_id)
+        else:
+            result, err_msg = True, ""
+        if result is False:
+            response["status"] = False
+            response["error"] = err_msg
+        else:
+            VIP().use_quota(bm.chat.id, file_size)
+            response["status"] = True
+            response["filepath"].append(p)
+
+    # convert format if necessary
+    settings = get_user_settings(str(chat_id))
+    if settings[2] == "video" or isinstance(settings[2], MagicMock):
+        # only convert if send type is video
+        convert_to_mp4(response, bm)
+    if settings[2] == "audio":
+        check_audio_format(response)
+    # disable it for now
+    # split_large_video(response)
+    return response
+
+
+def check_audio_format(resp: "dict"):
+    if resp["status"]:
+        # all_converted = []
+        path: pathlib.PosixPath
+        for path in resp["filepath"]:
+            if path.suffix != f".{AUDIO_FORMAT}":
+                new_path = path.with_suffix(f".{AUDIO_FORMAT}")
+                subprocess.check_output(["ffmpeg", "-y", "-i", path, new_path])
+                path.unlink()
+                index = resp["filepath"].index(path)
+                resp["filepath"][index] = new_path
+
+
+def add_instagram_cookies(url: "str", opt: "dict"):
+    if url.startswith("https://www.instagram.com"):
+        opt["cookiefi22"] = pathlib.Path(__file__).parent.joinpath("instagram.com_cookies.txt").as_posix()
+
+
+def run_splitter(video_path: "str"):
+    subprocess.check_output(f"sh split-video.sh {video_path} {TG_MAX_SIZE} ".split())
+    os.remove(video_path)
+
+
+def split_large_video(response: "dict"):
+    original_video = None
+    split = False
+    for original_video in response.get("filepath", []):
+        size = os.stat(original_video).st_size
+        if size > TG_MAX_SIZE:
+            split = True
+            logging.warning("file is too large %s, splitting...", size)
+            run_splitter(original_video)
+
+    if split and original_video:
+        response["filepath"] = [i.as_posix() for i in pathlib.Path(original_video).parent.glob("*")]
