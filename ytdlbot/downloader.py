@@ -69,10 +69,10 @@ def tqdm_progress(desc, total, finished, speed="", eta=""):
     text = f"""
 {desc}
 
-{progress}
-{detail}
-{more("Speed:", speed)}
-{more("ETA:", eta)}
+{{more("🚦 Ilerleme:", progress)}
+{more("🔻 Indirilen:", detail)}
+{more("⚡️ Hız:", speed)}
+{more("⏰ Zaman:", eta)}
     """
     f.close()
     return text
@@ -100,14 +100,14 @@ def download_hook(d: dict, bot_msg):
             if result is False:
                 raise ValueError(err_msg)
         eta = remove_bash_color(d.get("_eta_str", d.get("eta")))
-        text = tqdm_progress("Downloading...", total, downloaded, speed, eta)
+        text = tqdm_progress("⏬ Indiriliyor...", total, downloaded, speed, eta)
         edit_text(bot_msg, text)
         r.set(key, "ok", ex=5)
 
 
 def upload_hook(current, total, bot_msg):
     # filesize = sizeof_fmt(total)
-    text = tqdm_progress("Uploading...", total, current)
+    text = tqdm_progress("⏫ Yukleniyor...", total, current)
     edit_text(bot_msg, text)
 
 
