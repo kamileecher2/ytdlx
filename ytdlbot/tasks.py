@@ -336,7 +336,7 @@ def gen_cap(chat_id, url, video_path):
     remain = bot_text.remaining_quota_caption(chat_id)
     remain = bot_text.remaining_quota_caption(chat_id)
     worker = get_dl_source()
-    cap = f"`{file_name}`\n\n{url}\n\n{meta['width']}x{meta['height']} {file_size}\t" \
+    cap = f"`{file_name}`\n\n{meta['width']}x{meta['height']} {file_size}\t" \
           f"{meta['duration']}s\n{remain}\n{worker}"
     return cap, meta
 
