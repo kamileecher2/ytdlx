@@ -82,12 +82,12 @@ __I live in a place where I don't have access to Telegram Payments. So...__
     membership_require = f"You need to join this group or channel to use this bot\n\nhttps://t.me/{REQUIRED_MEMBERSHIP}"
 
     settings = """
-Gönderme biçimini ve video kalitesini seçin. **Yalnızca YouTube için geçerlidir**
+Gönderme biçimini ve video kalitesini seçin.**Yalnızca YouTube için geçerlidir**
 Yüksek kalite önerilir; Orta kalite 480P, düşük kalite ise 360P ve 240P olarak hedeflenir..
     
-Belge olarak göndermeyi seçerseniz akış olmayacağını unutmayın.
+Document seçerseniz akış olmayacağını unutmayın.
 
-Mevcut Ayarlarınız:
+⚙ Ayarlarınız:
 Video Kalitesi: **{0}**
 Gönderme Biçimi: **{1}**
 """
