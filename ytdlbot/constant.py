@@ -18,7 +18,7 @@ from utils import get_func_queue
 
 
 class BotText:
-    start = "Welcome to YouTube Download bot. Type /help for more information."
+    start = "📢 YouTube Botuna Hoş Geldiniz\n\n🚦 Youtube Video Link\n🚦 Youtube Playlist\n🚦 Youtube Kanal\n🚦 Youtube Short Link\n🚦 /direct https//kami.zip\n\n★ Bana Link Olarak Gonder\n\n★ Bir Link At ve Bekle\n★ Indirmeniz Tam Bitmeden Baska Link Atmayin\n☞ Destek @kamileecherch"
 
     help = f"""
 1. This bot should works at all times. If it doesn't, try to send the link again or DM @BennyThink
@@ -32,9 +32,9 @@ every one can use this bot within **{sizeof_fmt(QUOTA)} of quota for every {int(
 4. You can optionally choose to become 'VIP' user if you need more traffic. Type /vip for more information.
 
 5. Source code for this bot will always stay open, here-> https://github.com/tgbot-collection/ytdlbot
-    """ if ENABLE_VIP else "Help text"
+    """ if ENABLE_VIP else "1. Youtube Video veya Youtube List bağlantısı göndermeyi deneyin\n"
 
-    about = "YouTube-DL by @BennyThink. Open source on GitHub: https://github.com/tgbot-collection/ytdlbot"
+    about = "Admin @kamileecher"
 
     terms = f"""
 1. You can use this service, free of charge, {sizeof_fmt(QUOTA)} per {int(EX / 3600)} hours.
@@ -82,14 +82,14 @@ __I live in a place where I don't have access to Telegram Payments. So...__
     membership_require = f"You need to join this group or channel to use this bot\n\nhttps://t.me/{REQUIRED_MEMBERSHIP}"
 
     settings = """
-Select sending format and video quality. **Only applies to YouTube**
-High quality is recommended; Medium quality is aimed as 480P while low quality is aimed as 360P and 240P.
+Gönderme biçimini ve video kalitesini seçin. **Yalnızca YouTube için geçerlidir**
+Yüksek kalite önerilir; Orta kalite 480P, düşük kalite ise 360P ve 240P olarak hedeflenir..
     
-Remember if you choose to send as document, there will be no streaming. 
+Belge olarak göndermeyi seçerseniz akış olmayacağını unutmayın.
 
-Your current settings:
-Video quality: **{0}**
-Sending format: **{1}**
+Mevcut Ayarlarınız:
+Video Kalitesi: **{0}**
+Gönderme Biçimi: **{1}**
 """
 
     def remaining_quota_caption(self, chat_id):
@@ -120,9 +120,9 @@ Sending format: **{1}**
     def get_receive_link_text():
         reserved = get_func_queue("reserved")
         if ENABLE_CELERY and reserved:
-            text = f"Too many tasks. Your tasks was added to the reserved queue {reserved}."
+            text = f"Çok fazla görev. Görevleriniz ayrılmış sıraya eklendi {reserved}."
         else:
-            text = "Your task was added to active queue.\nProcessing...\n\n"
+            text = "☞ Göreviniz Sıraya Eklendi.\n🚦 İşleniyor...\n\n"
 
         return text
 
