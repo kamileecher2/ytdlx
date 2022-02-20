@@ -202,17 +202,17 @@ def settings_handler(client: "Client", message: "types.Message"):
     data = get_user_settings(str(chat_id))
     set_mode = (data[-1])
     text = {"Local": "Celery", "Celery": "Local"}.get(set_mode, "Local")
-    mode_text = f"Download mode: **{set_mode}**"
+    mode_text = f"Indirme Modu: **{set_mode}**"
     if message.chat.username == OWNER:
-        extra = [InlineKeyboardButton(f"Indirme Modunu Degistir {text}", callback_data=text)]
+        extra = [InlineKeyboardButton(f"Indirme Modunu Degistir [ {text} ]", callback_data=text)]
     else:
         extra = []
 
     markup = InlineKeyboardMarkup(
         [
             [  # First row
-                InlineKeyboardButton("Doc", callback_data="document"),
-                InlineKeyboardButton("Vid", callback_data="video"),
+                InlineKeyboardButton("Document", callback_data="document"),
+                InlineKeyboardButton("Video", callback_data="video"),
                 InlineKeyboardButton("Audio", callback_data="audio")
             ],
             [  # second row
