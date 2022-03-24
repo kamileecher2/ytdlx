@@ -16,5 +16,5 @@ supervisor==4.2.4
 tgbot-ping==1.0.4
 redis==4.1.4
 requests==2.27.1
-tqdm==4.62.3
+tqdm==4.63.1
 requests-toolbelt==0.9.1
